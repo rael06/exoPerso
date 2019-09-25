@@ -60,6 +60,24 @@ namespace Client.Views
 		}
 		#endregion
 
+		#region SelectedStudent
+		private Student _selectedStudent;
+
+		public Student SelectedStudent
+		{
+			get { return _selectedStudent; }
+			set
+			{
+				if (_selectedStudent != value)
+				{
+					_selectedStudent = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedStudent)));
+				}
+			}
+		}
+
+		#endregion
+
 		private CommunicationManager _com = new CommunicationManager();
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -87,6 +105,26 @@ namespace Client.Views
 		{
 			this.Hide();
 			Application.Current.MainWindow.Show();
+		}
+
+		private void Student_ItemSelection(object sender, SelectionChangedEventArgs e)
+		{
+			var selectedStudent = (sender as ListView).SelectedItem as Student;
+			if (selectedStudent != null) SelectedStudent = selectedStudent;
+		}
+
+		private void Update_Click(object sender, RoutedEventArgs e)
+		{
+			var communication = new Communication
+			{
+				Type = EType.UPDATE,
+				Target = ETarget.STUDENT,
+				Content = SelectedStudent,
+				Success = true
+			};
+			var response = _com.Communicate(communication);
+			Students = JsonConvert.DeserializeObject<ObservableCollection<Student>>(response.Content.ToString());
+			SelectedStudent = null;
 		}
 	}
 }

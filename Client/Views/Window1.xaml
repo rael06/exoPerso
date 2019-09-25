@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Client.Views"
         mc:Ignorable="d"
         Title="Window1" Height="450" Width="800">
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="50"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
@@ -14,9 +14,13 @@
 		<StackPanel>
 			<Button Height="50" Width="100" Click="Logout_Click" HorizontalAlignment="Left" >Log out</Button>
 		</StackPanel>
-		<StackPanel Grid.Row="1">
-			<TextBlock Text="Students" HorizontalAlignment="Center" FontSize="20"></TextBlock>
-			<ListView Height="300" Width="300" ItemsSource="{Binding Students}">
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<TextBlock Text="Students" HorizontalAlignment="Left" FontSize="20"></TextBlock>
+			<ListView Height="300" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding Students}" SelectionChanged="Student_ItemSelection">
 				<ListView.ItemTemplate>
 					<DataTemplate>
 						<WrapPanel>
@@ -25,6 +29,12 @@
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
-		</StackPanel>
+
+			<StackPanel Grid.Column="1">
+				<TextBlock Text="Edit name" FontSize="25" HorizontalAlignment="Center" Margin="0,50,0,50"></TextBlock>
+				<TextBox VerticalContentAlignment="Center" Text="{Binding SelectedStudent.Name}" Width="200" Height="50" FontSize="25"></TextBox>
+				<Button HorizontalAlignment="Center" Width="100" Height="30" Margin="0, 50, 0 , 0" Content="Update" Click="Update_Click"></Button>
+			</StackPanel>
+		</Grid>
 	</Grid>
 </Window>

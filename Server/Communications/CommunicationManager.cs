@@ -1,6 +1,8 @@
 ﻿using Common;
 using Common.enums;
+using Newtonsoft.Json;
 using Server.Models;
+using Server.Models.Entities;
 using Server.Repositories;
 using System;
 using System.Collections.Generic;
@@ -20,29 +22,44 @@ namespace Server.Communications
 
 		internal Communication SetResponse()
 		{
-			if (CommunicationReceived.Type == EType.LOGIN)
+			switch (CommunicationReceived.Type)
 			{
-				var found = StudentRepository.FindByName(CommunicationReceived.Content as string) != null ? true : false;
-				return new Communication(
-						CommunicationReceived.Type,
-						CommunicationReceived.Target,
-						found,
-						CommunicationReceived.Success
-					);
-			}
+				case EType.LOGIN:
+					var found = StudentRepository.FindByName(CommunicationReceived.Content as string) != null ? true : false;
+					return SetCommunication(found);
 
-			if (CommunicationReceived.Type == EType.READ)
-			{
-				if (CommunicationReceived.Target == ETarget.STUDENT)
-					return new Communication(
-						CommunicationReceived.Type,
-						CommunicationReceived.Target,
-						StudentRepository.GetAll,
-						CommunicationReceived.Success
-						);
-			}
+				case EType.READ:
+					switch (CommunicationReceived.Target)
+					{
+						case ETarget.STUDENT:
+							return SetCommunication(StudentRepository.GetAll);
 
-			return new Communication();
+						default: return new Communication();
+					}
+
+				case EType.UPDATE:
+					switch (CommunicationReceived.Target)
+					{
+						case ETarget.STUDENT:
+							var student = JsonConvert.DeserializeObject<Student>(CommunicationReceived.Content.ToString());
+							StudentRepository.Update(student);
+							return SetCommunication(StudentRepository.GetAll);
+
+						default: return new Communication();
+					}
+
+
+				default: return new Communication();
+			}
 		}
+
+		private Communication SetCommunication (dynamic content) =>
+			new Communication
+			(
+				CommunicationReceived.Type,
+				CommunicationReceived.Target,
+				content,
+				CommunicationReceived.Success
+			);
 	}
 }

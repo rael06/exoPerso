@@ -11,7 +11,7 @@
 			<RowDefinition Height="*"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
-		<TextBox Height="50" Width="200" FontSize="25" Text="{Binding Login}"></TextBox>
+		<TextBox Height="50" Width="200" FontSize="25" Text="{Binding Login}" VerticalContentAlignment="Center"></TextBox>
 		<Button Grid.Row="1" Height="50" Width="100" Click="Login_Click" HorizontalAlignment="Center" VerticalAlignment="Center" >Login</Button>
 	</Grid>
 </Window>
